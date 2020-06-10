@@ -1,0 +1,28 @@
+version: "3.7"
+
+x-volumes:
+  &app-volumes
+  working_dir: '/app'
+  volumes:
+    - ./:/app
+
+services:
+
+  server:
+    image: python:3.8.3-alpine
+    container_name: python-ipc_server
+    command: ['python', '-m', 'server']
+    environment:
+      SERVER_PORT: '8888'
+    <<: *app-volumes
+
+  client:
+    image: python:3.8.3-alpine
+    container_name: python-ipc_client
+    command: ['python', '-m', 'client']
+    environment:
+      SERVER_HOST: 'server'
+      SERVER_PORT: '8888'
+    depends_on:
+      - server
+    <<: *app-volumes
